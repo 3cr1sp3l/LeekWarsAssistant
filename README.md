@@ -1,7 +1,7 @@
 # LeekWarsAssistant
 LeekWarsAssistant is a Leek Wars Chabot to help you code in LeekScript!
 
-## Get LeekWarsAssistant?
+## Get LeekWarsAssistant?
 First clone the repo and install the requirements
 * `git clone https://github.com/3cr1sp3l/LeekWarsAssistant`
 * `cd LeekWarsAssistant`
