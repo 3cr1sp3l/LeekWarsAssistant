@@ -4,7 +4,6 @@ import chromadb.utils.embedding_functions as embedding_functions
 import gradio as gr
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
 
 
 
@@ -34,31 +33,42 @@ chroma_client = chromadb.PersistentClient(path="encyclopedia.db")
 collection = chroma_client.get_collection(name="documents", embedding_function=jinaai_ef)
 
 
+def generate_response(question, history):
+    # Build history
+    formatted_history = []
+    for user, assistant in history:
+        formatted_history.append({"role": "user", "content": user })
+        formatted_history.append({"role": "assistant", "content":assistant})
 
-question = "How to attack an enemy?"
+    # Query the database
+    rag_results = collection.query(
+        query_texts=[question],
+        n_results=3
+    )
 
-# Query the database
-rag_results = collection.query(
-    query_texts=[question],
-    n_results=3
-)
+    # Build the prompt
+    prompt = "Based on the folling informations from the Leek Script Encyclopedia, answer the following question: "  + question + "\n\nEncyclopedia pages: \n"
+    for result in rag_results['documents'][0]:
+        prompt += result + "\n\n\n"
 
-prompt = "Based on the folling informations from the Leek Script Encyclopedia, answer the following question: "  + question + "\n\nEncyclopedia pages: \n"
-for result in rag_results['documents'][0]:
-    prompt += result + "\n\n\n"
+    formatted_history.append({"role": "user", "content": prompt})
 
-response = client.chat.completions.create(
-    model="gpt-3.5-turbo-0125",
-    messages=[
-        {
-            "role": "system",
-            "content": "You are a helpful assistant that knows everything about Leek Wars, an online strategy game where players program the AI of their leeks to compete in turn-based battles. The game involves coding in a language called LeekScript, designed specifically for the game."
-        },
-        {
-            "role": "user",
-            "content": prompt
-        }
-    ]
-)
+    # Ask GPT
+    response = client.chat.completions.create(
+        model='gpt-3.5-turbo',
+        messages= formatted_history
+    )
 
-print(response.choices[0].message.content)
+    return response.choices[0].message.content
+
+gr.ChatInterface(
+    fn=generate_response,
+    chatbot=gr.Chatbot(scale=1),
+    textbox=gr.Textbox(placeholder="You can ask me anything", container=False, scale=3),
+    title="Leek Wars Assistant",
+    examples=["How to attack an enemy?", "Give a basic AI"],
+    cache_examples=False,
+    retry_btn=None,
+    undo_btn="Delete Previous",
+    clear_btn="Clear"
+).launch()
