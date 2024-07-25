@@ -1,0 +1,4 @@
+chromadb==0.5.4
+gradio==4.39.0
+openai==1.37.0
+python-dotenv==1.0.1
