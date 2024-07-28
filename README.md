@@ -18,13 +18,13 @@ Uses a Gradio graphical interface to chat with gpt-3.5. Uses RAG to boost LLM pe
 
 ## How to get LeekWarsAssistant?
 
-###### First clone the repo and install the requirements
+#### First clone the repo and install the requirements
 
 * `git clone https://github.com/3cr1sp3l/LeekWarsAssistant`
 * `cd LeekWarsAssistant`
 * `pip install requirements.txt`
 
-###### Create a `.env` file with your api keys
+#### Create a `.env` file with your api keys
 
 ```
 JINA_API_KEY=jina_************************************************************
@@ -33,8 +33,8 @@ OPENAI_ORAGNIZATION=org-************************
 OPENAI_PROJECT_ID=proj_*************************
 ```
 
-###### Now you need to create the vector store
+#### Now you need to create the vector store
 `python createDB.py`
 
-###### Finally, lauch the Assistant!
+#### Finally, lauch the Assistant!
 `python askLLM.py`
