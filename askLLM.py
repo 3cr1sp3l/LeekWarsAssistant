@@ -43,8 +43,9 @@ def generate_response(question, history):
     # Query the database
     rag_results = collection.query(
         query_texts=[question],
-        n_results=3
+        n_results=5
     )
+    print(rag_results['ids'][0])
 
     # Build the prompt
     prompt = "Based on the folling informations from the Leek Script Encyclopedia, answer the following question: "  + question + "\n\nEncyclopedia pages: \n"
@@ -61,6 +62,7 @@ def generate_response(question, history):
 
     return response.choices[0].message.content
 
+# Launch interface
 gr.ChatInterface(
     fn=generate_response,
     chatbot=gr.Chatbot(scale=1),
@@ -71,4 +73,4 @@ gr.ChatInterface(
     retry_btn=None,
     undo_btn="Delete Previous",
     clear_btn="Clear"
-).launch()
+).launch(share=False)
